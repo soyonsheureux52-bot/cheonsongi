@@ -1,1 +1,321 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>천송이쇼핑 관리자</title>
+<style>
+:root{
+  --pink:#ff4f97;--pink-dark:#e23b81;--pink-soft:#ffe6f1;--pink-softer:#fff5fa;
+  --ink:#2b2230;--muted:#8a8091;--line:#eadfe6;--ok:#2fb37a;--wait:#f0a020;
+  --radius:14px;--shadow:0 4px 18px rgba(120,90,110,.12);
+  --font:'Pretendard','Apple SD Gothic Neo','Malgun Gothic',system-ui,-apple-system,sans-serif;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0}
+body{font-family:var(--font);color:var(--ink);background:#faf7f9;line-height:1.5;font-size:15px;-webkit-font-smoothing:antialiased}
+.wrap{max-width:840px;margin:0 auto;padding:0 14px 60px}
 
+/* 상단바 */
+.topbar{background:linear-gradient(135deg,var(--pink) 0%,var(--pink-dark) 100%);color:#fff;padding:16px;display:flex;align-items:center;justify-content:space-between;gap:10px;position:sticky;top:0;z-index:30;box-shadow:0 3px 14px rgba(255,79,151,.25)}
+.topbar h1{margin:0;font-size:17px;font-weight:800;letter-spacing:-.3px}
+.topbar h1 small{display:block;font-weight:500;font-size:11.5px;opacity:.9;letter-spacing:2px}
+.topbar .actions{display:flex;gap:8px}
+.topbar button{border:0;background:rgba(255,255,255,.2);color:#fff;font-weight:700;padding:9px 12px;border-radius:10px;cursor:pointer;font-size:13px}
+.topbar button:active{transform:scale(.97)}
+
+/* 로그인 */
+.login{max-width:380px;margin:64px auto 0;background:#fff;border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow);padding:30px 24px;text-align:center}
+.login .ico{font-size:40px}
+.login h2{margin:8px 0 4px;font-size:20px;font-weight:800}
+.login p{margin:0 0 18px;color:var(--muted);font-size:13.5px}
+.login input{width:100%;padding:14px;font-size:16px;border:1.5px solid var(--line);border-radius:12px;text-align:center;letter-spacing:2px}
+.login input:focus{outline:0;border-color:var(--pink);box-shadow:0 0 0 3px rgba(255,79,151,.15)}
+.login button{width:100%;margin-top:12px;padding:15px;border:0;border-radius:12px;background:linear-gradient(135deg,var(--pink),var(--pink-dark));color:#fff;font-size:16px;font-weight:800;cursor:pointer}
+.login .err{color:#e2426b;font-size:13px;margin-top:10px;min-height:18px;font-weight:600}
+.login .demo{margin-top:14px;font-size:12px;color:var(--muted)}
+
+/* 요약 */
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:16px}
+.stat{background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px 10px;text-align:center;box-shadow:var(--shadow)}
+.stat .n{font-size:26px;font-weight:800;line-height:1;font-variant-numeric:tabular-nums}
+.stat .l{font-size:12px;color:var(--muted);margin-top:5px;font-weight:600}
+.stat.wait .n{color:var(--wait)}
+.stat.paid .n{color:var(--ok)}
+.stat.total .n{color:var(--pink-dark)}
+
+/* 검색 */
+.searchbar{display:flex;gap:8px;margin-top:14px}
+.searchbar input{flex:1;padding:12px 14px;font-size:16px;border:1.5px solid var(--line);border-radius:12px;background:#fff}
+.searchbar input:focus{outline:0;border-color:var(--pink);box-shadow:0 0 0 3px rgba(255,79,151,.12)}
+.filter-tabs{display:flex;gap:8px;margin-top:12px}
+.filter-tabs button{flex:1;padding:10px;border:1.5px solid var(--line);background:#fff;border-radius:10px;font-weight:700;font-size:13.5px;color:#6b6270;cursor:pointer}
+.filter-tabs button.on{background:var(--pink);border-color:var(--pink);color:#fff}
+
+/* 주문 카드 */
+.list{margin-top:14px;display:flex;flex-direction:column;gap:12px}
+.o{background:#fff;border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);overflow:hidden;border-left:4px solid var(--wait)}
+.o.paid{border-left-color:var(--ok)}
+.o .hd{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:12px 14px;background:var(--pink-softer);border-bottom:1px solid var(--line)}
+.o .who{font-weight:800;font-size:15px}
+.o .who .nick{color:var(--pink-dark);font-weight:700;font-size:13px;margin-left:6px}
+.o .t{font-size:11.5px;color:var(--muted);white-space:nowrap}
+.o .bd{padding:12px 14px}
+.o .items{font-size:14.5px;font-weight:600;white-space:pre-wrap;line-height:1.6}
+.o .grid{margin-top:10px;display:grid;grid-template-columns:1fr;gap:5px;font-size:13px;color:#5c5560}
+.o .grid .k{color:var(--muted);font-weight:700;margin-right:6px}
+.o .grid a{color:var(--pink-dark)}
+.o .ft{display:flex;align-items:center;gap:10px;padding:0 14px 13px}
+.o .qty{font-size:13px;color:#6b6270}
+.o .qty b{color:var(--pink-dark);font-size:16px}
+.o .toggle{margin-left:auto;border:1.5px solid var(--wait);background:#fff;color:var(--wait);font-weight:800;font-size:13.5px;padding:10px 16px;border-radius:10px;cursor:pointer;transition:.15s}
+.o.paid .toggle{background:var(--ok);border-color:var(--ok);color:#fff}
+.o .toggle:active{transform:scale(.97)}
+.o .copy{border:1.5px solid var(--line);background:#fff;color:#6b6270;font-weight:700;font-size:12.5px;padding:10px 12px;border-radius:10px;cursor:pointer}
+
+.empty{text-align:center;padding:44px 16px;color:var(--muted)}
+.empty .big{font-size:42px;margin-bottom:10px}
+.status-msg{text-align:center;padding:34px;color:var(--muted)}
+.spinner{width:24px;height:24px;border:3px solid var(--pink-soft);border-top-color:var(--pink);border-radius:50%;display:inline-block;animation:spin .7s linear infinite;vertical-align:middle}
+@keyframes spin{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion:reduce){.spinner{animation:none}}
+.demo-banner{background:#fff3f8;color:var(--pink-dark);border:1px dashed var(--pink);border-radius:10px;padding:9px 12px;font-size:12.5px;margin-top:14px;text-align:center;font-weight:600}
+.toast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%) translateY(18px);background:var(--ink);color:#fff;padding:11px 18px;border-radius:999px;font-size:14px;font-weight:600;opacity:0;transition:.25s;pointer-events:none;z-index:99}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+@media(min-width:560px){ .o .grid{grid-template-columns:1fr 1fr} }
+</style>
+</head>
+<body>
+
+<!-- 로그인 -->
+<div id="loginView">
+  <div class="login">
+    <div class="ico">🔐</div>
+    <h2>천송이쇼핑 관리자</h2>
+    <p>비밀번호를 입력해 주세요</p>
+    <form id="loginForm">
+      <input type="password" id="pw" inputmode="text" autocomplete="current-password" placeholder="비밀번호" required>
+      <button type="submit" id="loginBtn">로그인</button>
+      <div class="err" id="loginErr"></div>
+    </form>
+    <div class="demo" id="loginDemo"></div>
+  </div>
+</div>
+
+<!-- 관리자 화면 -->
+<div id="adminView" style="display:none">
+  <div class="topbar">
+    <h1>천송이쇼핑 <small>ADMIN</small></h1>
+    <div class="actions">
+      <button id="refreshBtn" type="button">↻ 새로고침</button>
+      <button id="logoutBtn" type="button">로그아웃</button>
+    </div>
+  </div>
+  <div class="wrap">
+    <div id="demoBanner"></div>
+    <div class="stats">
+      <div class="stat total"><div class="n" id="stTotal">0</div><div class="l">전체 주문</div></div>
+      <div class="stat wait"><div class="n" id="stWait">0</div><div class="l">입금 대기</div></div>
+      <div class="stat paid"><div class="n" id="stQty">0</div><div class="l">총 수량</div></div>
+    </div>
+    <div class="searchbar">
+      <input type="text" id="search" placeholder="🔍 닉네임 · 주문자 · 연락처 · 상품 검색">
+    </div>
+    <div class="filter-tabs">
+      <button data-f="all" class="on">전체</button>
+      <button data-f="wait">입금대기</button>
+      <button data-f="paid">입금완료</button>
+    </div>
+    <div class="list" id="list"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ⚙️ 설정 — 주문 페이지(index.html)와 "똑같은" 구글 시트 주소를 넣으세요.
+   비워두면 예시(데모) 데이터로 화면을 볼 수 있습니다. (데모 비밀번호: 1234) */
+const CONFIG = { gasUrl : "" };
+
+const $ = s=>document.querySelector(s);
+let ORDERS = [];
+let PW = "";
+let FILTER = "all";
+const PW_KEY = "cheonsongi_admin_pw";
+
+/* 데모 데이터 */
+const DEMO = [
+  {row:5,time:"2026. 8. 22. 오전 11:40",nickname:"복숭아공주",name:"김민지",phone:"01055557777",address:"(04524) 서울 중구 세종대로 110 202호",depositor:"김민지",items:"45번 데일리 슬랙스 [블랙/L] x1 / 51번 크롭 니트 [핑크/FREE] x1",totalQty:2,memo:"부재 시 문 앞",paid:""},
+  {row:4,time:"2026. 8. 22. 오전 10:05",nickname:"라라",name:"이수연",phone:"01033334444",address:"(48058) 부산 해운대구 우동 1",depositor:"이수연",items:"12번 플라워 원피스 [아이보리/M] x2",totalQty:2,memo:"",paid:"O"},
+  {row:3,time:"2026. 8. 21. 오후 8:22",nickname:"뭉이맘",name:"박지영",phone:"01022221111",address:"(63001) 제주 제주시 첨단로 242",depositor:"박지영",items:"30번 가디건 [베이지/FREE] x1 / 33번 티셔츠 [화이트/L] x3",totalQty:4,memo:"제주도라 배송비 확인해주세요",paid:""},
+];
+
+const isPaid = v => String(v||'').trim() !== '';
+const esc = s => String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+let toastTimer; function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.classList.remove('show'),1700);}
+
+/* JSONP (읽기) */
+function jsonp(params){
+  return new Promise((resolve,reject)=>{
+    const cb='cb_'+Date.now()+'_'+Math.floor(Math.random()*100000);
+    params.callback=cb;
+    const qs=Object.keys(params).map(k=>encodeURIComponent(k)+'='+encodeURIComponent(params[k])).join('&');
+    const s=document.createElement('script'); let done=false;
+    const cleanup=()=>{ try{delete window[cb]}catch(e){window[cb]=undefined} s.remove(); };
+    window[cb]=d=>{done=true;cleanup();resolve(d);};
+    s.onerror=()=>{ if(!done){cleanup();reject(new Error('네트워크 오류'));} };
+    s.src=CONFIG.gasUrl+(CONFIG.gasUrl.includes('?')?'&':'?')+qs;
+    document.body.appendChild(s);
+    setTimeout(()=>{ if(!done){cleanup();reject(new Error('시간 초과'));} },15000);
+  });
+}
+
+/* ---- 로그인 ---- */
+$('#loginForm').addEventListener('submit', async e=>{
+  e.preventDefault();
+  const pw=$('#pw').value; const btn=$('#loginBtn'); const err=$('#loginErr');
+  err.textContent=''; btn.disabled=true; btn.textContent='확인 중...';
+  try{
+    if(CONFIG.gasUrl){
+      const res=await jsonp({action:'admin', password:pw});
+      if(res.result!=='success') throw new Error(res.message||'로그인 실패');
+      ORDERS=res.orders||[];
+    }else{
+      await new Promise(r=>setTimeout(r,300));
+      if(pw!=='1234') throw new Error('비밀번호가 올바르지 않습니다. (데모: 1234)');
+      ORDERS=DEMO.slice();
+    }
+    PW=pw;
+    try{ sessionStorage.setItem(PW_KEY, pw); }catch(_){}
+    enterAdmin();
+  }catch(ex){
+    err.textContent=ex.message;
+  }finally{
+    btn.disabled=false; btn.textContent='로그인';
+  }
+});
+
+function enterAdmin(){
+  $('#loginView').style.display='none';
+  $('#adminView').style.display='block';
+  if(!CONFIG.gasUrl) $('#demoBanner').innerHTML='<div class="demo-banner">예시(데모) 데이터입니다 · 실제 연동 후에는 진짜 주문이 보여요</div>';
+  render();
+}
+
+async function reload(){
+  const list=$('#list');
+  list.innerHTML='<div class="status-msg"><span class="spinner"></span> 불러오는 중...</div>';
+  try{
+    if(CONFIG.gasUrl){
+      const res=await jsonp({action:'admin', password:PW});
+      if(res.result!=='success') throw new Error(res.message||'불러오기 실패');
+      ORDERS=res.orders||[];
+    }
+    render();
+  }catch(ex){ toast('불러오기 실패: '+ex.message); render(); }
+}
+
+/* ---- 렌더 ---- */
+function stats(){
+  const total=ORDERS.length;
+  const wait=ORDERS.filter(o=>!isPaid(o.paid)).length;
+  const qty=ORDERS.reduce((s,o)=>s+(parseInt(o.totalQty,10)||0),0);
+  $('#stTotal').textContent=total; $('#stWait').textContent=wait; $('#stQty').textContent=qty;
+}
+function visible(){
+  const q=$('#search').value.trim().toLowerCase();
+  return ORDERS.filter(o=>{
+    if(FILTER==='wait' && isPaid(o.paid)) return false;
+    if(FILTER==='paid' && !isPaid(o.paid)) return false;
+    if(!q) return true;
+    return [o.nickname,o.name,o.phone,o.items,o.depositor].join(' ').toLowerCase().includes(q);
+  });
+}
+function render(){
+  stats();
+  const list=$('#list'); const rows=visible();
+  if(!rows.length){
+    list.innerHTML='<div class="empty"><div class="big">📭</div>표시할 주문이 없어요.</div>';
+    return;
+  }
+  list.innerHTML = rows.map(o=>{
+    const paid=isPaid(o.paid);
+    const phoneDigits=String(o.phone).replace(/[^0-9]/g,'');
+    return `<div class="o ${paid?'paid':''}" data-row="${esc(o.row)}">
+      <div class="hd">
+        <div class="who">${esc(o.name)}<span class="nick">${esc(o.nickname)}</span></div>
+        <div class="t">${esc(o.time)}</div>
+      </div>
+      <div class="bd">
+        <div class="items">${esc(o.items)}</div>
+        <div class="grid">
+          <div><span class="k">연락처</span><a href="tel:${esc(phoneDigits)}">${esc(o.phone)}</a></div>
+          <div><span class="k">입금자</span>${esc(o.depositor)||'-'}</div>
+          <div style="grid-column:1/-1"><span class="k">주소</span>${esc(o.address)}</div>
+          ${o.memo?`<div style="grid-column:1/-1"><span class="k">메모</span>${esc(o.memo)}</div>`:''}
+        </div>
+      </div>
+      <div class="ft">
+        <span class="qty">총 <b>${esc(o.totalQty)}</b>개</span>
+        <button class="copy" type="button" onclick="copyOrder(this)">주소복사</button>
+        <button class="toggle" type="button" onclick="toggle(this)">${paid?'✓ 입금완료':'입금확인'}</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+/* ---- 입금확인 토글 ---- */
+async function toggle(btn){
+  const card=btn.closest('.o');
+  const row=card.getAttribute('data-row');
+  const o=ORDERS.find(x=>String(x.row)===String(row));
+  if(!o) return;
+  const newPaid = isPaid(o.paid) ? '' : 'O';
+  o.paid=newPaid;                 // 낙관적 반영
+  render();
+  try{
+    if(CONFIG.gasUrl){
+      await fetch(CONFIG.gasUrl,{method:'POST',mode:'no-cors',
+        headers:{'Content-Type':'text/plain;charset=utf-8'},
+        body:JSON.stringify({action:'updateStatus',password:PW,row:o.row,value:newPaid})});
+    }
+    toast(newPaid?'입금확인으로 표시했어요':'입금대기로 되돌렸어요');
+  }catch(ex){
+    o.paid = newPaid ? '' : 'O'; render(); // 실패 시 원복
+    toast('저장 실패 — 다시 시도해 주세요');
+  }
+}
+
+/* ---- 주소 복사 ---- */
+function copyOrder(btn){
+  const card=btn.closest('.o');
+  const o=ORDERS.find(x=>String(x.row)===String(card.getAttribute('data-row')));
+  if(!o) return;
+  const text=`${o.name} / ${String(o.phone)}\n${o.address}\n${o.items} (총 ${o.totalQty}개)`;
+  const t=document.createElement('textarea');t.value=text;t.style.position='fixed';t.style.opacity=0;
+  document.body.appendChild(t);t.select();try{document.execCommand('copy')}catch(e){}document.body.removeChild(t);
+  if(navigator.clipboard) navigator.clipboard.writeText(text).catch(()=>{});
+  toast('주소·주문내역을 복사했어요');
+}
+
+/* ---- 이벤트 ---- */
+$('#search').addEventListener('input', render);
+document.querySelectorAll('.filter-tabs button').forEach(b=>b.addEventListener('click',()=>{
+  document.querySelectorAll('.filter-tabs button').forEach(x=>x.classList.remove('on'));
+  b.classList.add('on'); FILTER=b.getAttribute('data-f'); render();
+}));
+$('#refreshBtn').addEventListener('click', reload);
+$('#logoutBtn').addEventListener('click', ()=>{
+  PW=''; try{sessionStorage.removeItem(PW_KEY)}catch(_){}
+  $('#adminView').style.display='none'; $('#loginView').style.display='block'; $('#pw').value='';
+});
+
+/* 데모 안내 & 세션 자동 로그인 */
+if(!CONFIG.gasUrl) $('#loginDemo').textContent='예시로 둘러보려면 비밀번호 1234 를 입력하세요';
+(function autologin(){
+  let saved=''; try{ saved=sessionStorage.getItem(PW_KEY)||''; }catch(_){}
+  if(saved){ $('#pw').value=saved; $('#loginForm').requestSubmit(); }
+})();
+</script>
+</body>
+</html>
