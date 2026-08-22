@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>내 주문 조회 · 천송이쇼핑</title>
+<style>
+:root{
+  --pink:#ff4f97;--pink-dark:#e23b81;--pink-soft:#ffe6f1;--pink-softer:#fff5fa;
+  --ink:#2b2230;--muted:#8a8091;--line:#f2dce8;--ok:#2fb37a;--wait:#f0a020;
+  --radius:16px;--shadow:0 6px 24px rgba(255,79,151,.14);
+  --font:'Pretendard','Apple SD Gothic Neo','Malgun Gothic',system-ui,-apple-system,sans-serif;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0}
+body{font-family:var(--font);color:var(--ink);background:linear-gradient(180deg,#fff0f7 0%,#fff8fb 200px,#fffdfe 100%);line-height:1.55;font-size:16px;-webkit-font-smoothing:antialiased}
+.wrap{max-width:560px;margin:0 auto;padding:0 16px 60px}
+.hero{text-align:center;padding:30px 16px 24px;background:linear-gradient(135deg,var(--pink) 0%,#ff7ab3 100%);color:#fff;border-radius:0 0 28px 28px;box-shadow:0 8px 26px rgba(255,79,151,.28)}
+.hero .logo{font-size:14px;letter-spacing:4px;opacity:.92;font-weight:600}
+.hero h1{margin:6px 0 4px;font-size:26px;font-weight:800;letter-spacing:-.5px}
+.hero p{margin:0;font-size:13.5px;opacity:.95}
+.card{background:#fff;border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:20px 18px;margin-top:18px}
+.card h2{margin:0 0 14px;font-size:16px;font-weight:800;display:flex;align-items:center;gap:8px}
+.card h2 .dot{width:9px;height:9px;border-radius:50%;background:var(--pink);flex:none}
+label.field{display:block;margin-top:14px;font-size:14px;font-weight:700;color:#443b4b}
+label.field:first-of-type{margin-top:0}
+label.field .hint{display:block;font-weight:500;color:var(--muted);font-size:12px;margin-top:2px}
+input{width:100%;margin-top:7px;padding:13px 14px;font-size:16px;font-family:inherit;color:var(--ink);border:1.5px solid var(--line);border-radius:12px;background:#fffdfe;transition:border-color .15s,box-shadow .15s}
+input:focus{outline:0;border-color:var(--pink);box-shadow:0 0 0 3px rgba(255,79,151,.15)}
+.btn{width:100%;margin-top:18px;padding:16px;border:0;border-radius:14px;background:linear-gradient(135deg,var(--pink) 0%,var(--pink-dark) 100%);color:#fff;font-size:16px;font-weight:800;letter-spacing:.3px;cursor:pointer;box-shadow:0 6px 16px rgba(255,79,151,.3);transition:transform .08s,opacity .2s}
+.btn:active{transform:scale(.99)}
+.btn:disabled{opacity:.55;cursor:not-allowed}
+/* 결과 */
+#results{margin-top:6px}
+.order{border:1px solid var(--line);border-radius:14px;padding:15px;margin-top:14px;background:#fff;box-shadow:var(--shadow)}
+.order .top{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:10px}
+.order .time{font-size:12.5px;color:var(--muted)}
+.badge{font-size:12.5px;font-weight:800;padding:5px 12px;border-radius:999px;white-space:nowrap}
+.badge.paid{background:#e7f7ef;color:var(--ok)}
+.badge.wait{background:#fef3e0;color:var(--wait)}
+.order .items{font-size:15px;font-weight:600;color:var(--ink);white-space:pre-wrap;line-height:1.6}
+.order .meta{margin-top:10px;padding-top:10px;border-top:1px dashed var(--line);font-size:13px;color:#6b6270;display:flex;flex-wrap:wrap;gap:4px 14px}
+.order .meta b{color:var(--pink-dark)}
+.empty{text-align:center;padding:34px 12px;color:var(--muted);font-size:14.5px}
+.empty .big{font-size:40px;margin-bottom:8px}
+.status-msg{text-align:center;padding:20px;color:var(--muted);font-size:14px}
+.demo-tag{display:inline-block;margin-top:10px;font-size:11.5px;background:#fff3f8;color:var(--pink-dark);border:1px dashed var(--pink);padding:4px 10px;border-radius:999px}
+.back{display:block;text-align:center;margin-top:22px;font-size:14px;color:var(--pink-dark);font-weight:700}
+.foot{text-align:center;color:var(--muted);font-size:12px;margin-top:22px;line-height:1.7}
+.spinner{width:22px;height:22px;border:3px solid var(--pink-soft);border-top-color:var(--pink);border-radius:50%;display:inline-block;animation:spin .7s linear infinite;vertical-align:middle}
+@keyframes spin{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion:reduce){.spinner{animation:none}}
+</style>
+</head>
+<body>
+<header class="hero">
+  <div class="logo">CHEON SONG I</div>
+  <h1>내 주문 조회</h1>
+  <p>주문하실 때 입력한 연락처로 확인하세요</p>
+</header>
+
+<div class="wrap">
+  <form class="card" id="lookupForm" novalidate>
+    <h2><span class="dot"></span>주문 조회하기</h2>
+    <label class="field">연락처
+      <span class="hint">주문 시 입력한 번호를 '-' 없이 숫자만 입력</span>
+      <input type="tel" id="phone" inputmode="numeric" autocomplete="tel" placeholder="01012345678" required>
+    </label>
+    <label class="field">닉네임 <span style="font-weight:500;color:var(--muted)">(선택)</span>
+      <span class="hint">여러 명이 같은 번호를 쓸 때만 입력하세요</span>
+      <input type="text" id="nickname" autocomplete="off" placeholder="닉네임">
+    </label>
+    <button type="submit" class="btn" id="btn">주문 조회하기 🔍</button>
+    <div id="demoTag"></div>
+  </form>
+
+  <div id="results"></div>
+
+  <a class="back" href="index.html">← 주문하러 가기</a>
+  <div class="foot">천송이쇼핑 · 문의는 밴드/카카오톡으로 남겨주세요</div>
+</div>
+
+<script>
+/* ⚙️ 설정 — 주문 페이지(index.html)에 넣은 것과 "똑같은" 구글 시트 주소를 넣으세요.
+   비워두면 예시(데모) 화면이 보입니다. */
+const CONFIG = {
+  gasUrl : "",
+};
+
+const $ = s => document.querySelector(s);
+const results = $('#results');
+
+// 데모용 샘플 (gasUrl 비었을 때만 사용)
+const DEMO = [
+  { time:"2026. 8. 21. 오후 2:14:03", items:"12번 플라워 원피스 [핑크/M] x1 / 30번 니트 가디건 [아이보리/FREE] x2", totalQty:3, address:"(06236) 서울 강남구 테헤란로 1 101동 1001호", name:"홍길동", paid:"O" },
+  { time:"2026. 8. 22. 오전 11:02:47", items:"45번 데일리 슬랙스 [블랙/L] x1", totalQty:1, address:"(06236) 서울 강남구 테헤란로 1 101동 1001호", name:"홍길동", paid:"" },
+];
+
+function isPaid(v){ return String(v||'').trim() !== ''; }
+
+function render(orders){
+  if(!orders.length){
+    results.innerHTML = `<div class="card"><div class="empty"><div class="big">🔍</div>
+      해당 연락처로 접수된 주문이 없어요.<br>번호를 다시 확인해 주세요.</div></div>`;
+    return;
+  }
+  const html = orders.map(o=>{
+    const paid = isPaid(o.paid);
+    return `<div class="order">
+      <div class="top">
+        <span class="time">${esc(o.time)}</span>
+        <span class="badge ${paid?'paid':'wait'}">${paid?'✓ 입금확인 완료':'⏳ 입금 확인중'}</span>
+      </div>
+      <div class="items">${esc(o.items)}</div>
+      <div class="meta">
+        <span>총 <b>${esc(o.totalQty)}</b>개</span>
+        ${o.name?`<span>받는분 <b>${esc(o.name)}</b></span>`:''}
+        ${o.address?`<span style="flex-basis:100%">📦 ${esc(o.address)}</span>`:''}
+      </div>
+    </div>`;
+  }).join('');
+  results.innerHTML = `<div style="margin-top:18px;font-size:13.5px;color:#6b6270;font-weight:700">주문 ${orders.length}건</div>${html}`;
+}
+
+function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+
+/* JSONP — Apps Script에서 CORS 문제 없이 데이터 읽기 */
+function jsonp(params){
+  return new Promise((resolve,reject)=>{
+    const cb='cb_'+Date.now()+'_'+Math.floor(Math.random()*100000);
+    params.callback=cb;
+    const qs=Object.keys(params).map(k=>encodeURIComponent(k)+'='+encodeURIComponent(params[k])).join('&');
+    const s=document.createElement('script');
+    let done=false;
+    const cleanup=()=>{ try{delete window[cb]}catch(e){window[cb]=undefined} s.remove(); };
+    window[cb]=data=>{ done=true; cleanup(); resolve(data); };
+    s.onerror=()=>{ if(!done){ cleanup(); reject(new Error('네트워크 오류')); } };
+    s.src=CONFIG.gasUrl+(CONFIG.gasUrl.includes('?')?'&':'?')+qs;
+    document.body.appendChild(s);
+    setTimeout(()=>{ if(!done){ cleanup(); reject(new Error('시간 초과')); } },15000);
+  });
+}
+
+$('#lookupForm').addEventListener('submit', async e=>{
+  e.preventDefault();
+  const phone = $('#phone').value.replace(/[^0-9]/g,'');
+  const nick  = $('#nickname').value.trim();
+  if(!phone){ $('#phone').focus(); return; }
+
+  const btn=$('#btn'); btn.disabled=true; btn.textContent='조회 중...';
+  results.innerHTML = `<div class="card"><div class="status-msg"><span class="spinner"></span> 주문을 찾고 있어요...</div></div>`;
+
+  try{
+    let orders;
+    if(CONFIG.gasUrl){
+      const res = await jsonp({action:'lookup', phone, nickname:nick});
+      if(res.result!=='success') throw new Error(res.message||'조회 실패');
+      orders = res.orders||[];
+    }else{
+      await new Promise(r=>setTimeout(r,500)); // 데모: 잠깐 로딩 흉내
+      orders = DEMO;
+    }
+    render(orders);
+  }catch(err){
+    results.innerHTML = `<div class="card"><div class="empty"><div class="big">😢</div>
+      조회 중 문제가 생겼어요.<br>잠시 후 다시 시도하거나 밴드/카톡으로 문의해 주세요.<br>
+      <span style="font-size:12px;color:#c99">(${esc(err.message)})</span></div></div>`;
+  }finally{
+    btn.disabled=false; btn.textContent='주문 조회하기 🔍';
+  }
+});
+
+if(!CONFIG.gasUrl){ $('#demoTag').innerHTML = '<span class="demo-tag">예시 화면 · 실제 연동 시 아무 번호나 넣고 조회하면 샘플이 보여요</span>'; }
+</script>
+</body>
+</html>
