@@ -126,21 +126,16 @@ function render(orders){
 
 function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
 
-/* JSONP — Apps Script에서 CORS 문제 없이 데이터 읽기 */
+/* Apps Script 호출 — fetch 사용 (credentials 생략: 방문자가 구글에 로그인돼 있어도 항상 안정적으로 동작) */
 function jsonp(params){
-  return new Promise((resolve,reject)=>{
-    const cb='cb_'+Date.now()+'_'+Math.floor(Math.random()*100000);
-    params.callback=cb;
-    const qs=Object.keys(params).map(k=>encodeURIComponent(k)+'='+encodeURIComponent(params[k])).join('&');
-    const s=document.createElement('script');
-    let done=false;
-    const cleanup=()=>{ try{delete window[cb]}catch(e){window[cb]=undefined} s.remove(); };
-    window[cb]=data=>{ done=true; cleanup(); resolve(data); };
-    s.onerror=()=>{ if(!done){ cleanup(); reject(new Error('네트워크 오류')); } };
-    s.src=CONFIG.gasUrl+(CONFIG.gasUrl.includes('?')?'&':'?')+qs;
-    document.body.appendChild(s);
-    setTimeout(()=>{ if(!done){ cleanup(); reject(new Error('시간 초과')); } },15000);
-  });
+  const qs=Object.keys(params).map(k=>encodeURIComponent(k)+'='+encodeURIComponent(params[k])).join('&');
+  const url=CONFIG.gasUrl+(CONFIG.gasUrl.includes('?')?'&':'?')+qs;
+  const ctrl=new AbortController();
+  const timer=setTimeout(()=>ctrl.abort(),15000);
+  return fetch(url,{credentials:'omit',signal:ctrl.signal})
+    .then(r=>{ if(!r.ok) throw new Error('네트워크 오류'); return r.json(); })
+    .catch(e=>{ throw new Error(e.name==='AbortError' ? '시간 초과' : '네트워크 오류'); })
+    .finally(()=>clearTimeout(timer));
 }
 
 $('#lookupForm').addEventListener('submit', async e=>{
