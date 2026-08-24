@@ -102,8 +102,6 @@ textarea{resize:vertical;min-height:64px}
 .addr-row input{margin-top:0}
 .btn-mini{flex:none;padding:0 16px;border:1.5px solid var(--pink);background:var(--pink-soft);color:var(--pink-dark);font-weight:700;border-radius:12px;cursor:pointer;font-size:14px;white-space:nowrap}
 
-.save-me{display:flex;align-items:center;gap:8px;margin-top:14px;font-size:13px;color:#6b6270;background:var(--pink-softer);padding:10px 12px;border-radius:10px}
-.save-me input{width:18px;height:18px;accent-color:var(--pink);flex:none}
 
 /* ---- 상품 목록 ---- */
 .item{
@@ -251,11 +249,6 @@ textarea{resize:vertical;min-height:64px}
       <input type="text" name="depositor">
     </label>
 
-    <label class="save-me">
-      <input type="checkbox" id="saveMe" checked>
-      <span>내 정보를 이 기기에 저장해서 다음 주문 때 자동으로 채우기</span>
-    </label>
-
     <!-- 상품 -->
     <h2 style="margin-top:24px"><span class="dot"></span>주문 상품</h2>
     <div id="items"></div>
@@ -364,9 +357,10 @@ document.getElementById('kakaoLink').href         = CONFIG.kakaoUrl;
 document.getElementById('year').textContent       = new Date().getFullYear();
 document.title = CONFIG.shopName + " 주문서";
 
-const STORE_KEY = "cheonsongi_customer";
 const $ = s => document.querySelector(s);
 const itemsBox = $('#items');
+// 예전 버전에서 저장해둔 고객정보 자동완성 데이터가 남아있으면 정리
+try{ localStorage.removeItem("cheonsongi_customer"); }catch(e){}
 
 /* ---- 토스트 ---- */
 let toastTimer;
@@ -463,26 +457,6 @@ function calcTotal(){
   $('#stickyQty').textContent = t;
 }
 
-/* ---- 고객 정보 저장/불러오기 ---- */
-function loadCustomer(){
-  try{
-    const raw = localStorage.getItem(STORE_KEY); if(!raw) return;
-    const c = JSON.parse(raw);
-    ['nickname','name','phone','zipcode','addr1','addr2','depositor'].forEach(k=>{
-      const f = document.querySelector(`[name=${k}]`); if(f && c[k]) f.value = c[k];
-    });
-  }catch(e){}
-}
-function saveCustomer(data){
-  if(!$('#saveMe').checked){ try{localStorage.removeItem(STORE_KEY)}catch(e){} return; }
-  try{
-    localStorage.setItem(STORE_KEY, JSON.stringify({
-      nickname:data.nickname,name:data.name,phone:data.phone,
-      zipcode:data.zipcode,addr1:data.addr1,addr2:data.addr2,depositor:data.depositor
-    }));
-  }catch(e){}
-}
-
 /* ---- 폼 수집 & 검증 ---- */
 function collect(){
   const f = $('#orderForm');
@@ -548,7 +522,6 @@ $('#orderForm').addEventListener('submit', async function(e){
 
   const btn = $('#submitBtn');
   btn.disabled = true; btn.textContent = "접수 중...";
-  saveCustomer(d);
   lastSummary = buildSummary(d);
 
   const payload = {
@@ -587,19 +560,17 @@ function showDone(summary){
 }
 function copySummary(){ copyText(lastSummary); toast("주문내역이 복사되었어요"); }
 function orderAgain(){
-  // 상품만 초기화, 고객정보는 유지
+  // 상품만 초기화
   itemsBox.innerHTML=''; addItem();
   $('#agree').checked=false;
   $('#doneCard').style.display='none';
   $('#orderForm').style.display='block';
   $('#footLinks').style.display='flex';
   $('#stickyBar').style.display='block';
-  loadCustomer();
   window.scrollTo({top:0,behavior:'smooth'});
 }
 
 /* ---- 초기화 ---- */
-loadCustomer();
 addItem();
 </script>
 </body>
