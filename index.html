@@ -331,11 +331,10 @@ textarea{resize:vertical;min-height:64px}
 
   <!-- 하단 링크 -->
   <div class="links" id="footLinks">
-    <a id="bandLink" href="#" target="_blank" rel="noopener"><span class="ic">👥</span>밴드 바로가기</a>
     <a id="kakaoLink" href="#" target="_blank" rel="noopener"><span class="ic">💬</span>카톡 문의</a>
   </div>
 
-  <a href="lookup.html" class="lookup-link" id="lookupLink">📦 발송 후 운송장번호가 궁금하신가요? <b>운송장 조회하기</b></a>
+  <a href="lookup.html" class="lookup-link" id="lookupLink">📦 운송장번호가 궁금하신가요? <b>운송장 조회하기</b></a>
 
   <div class="foot">
     천송이쇼핑 · 문의는 밴드/카카오톡으로 남겨주세요<br>
@@ -373,8 +372,7 @@ const CONFIG = {
   //    비워두면 주문내역을 복사해서 카톡/밴드로 보내는 방식으로 동작합니다.
   gasUrl   : "https://script.google.com/macros/s/AKfycbw-lNlBRdhKPsPnysSzk2CVGCvM3MM_z-4YBLOx1kmniQbip-9r1122wnF0xAk8xaNiBA/exec",
 
-  // 4) 하단 버튼 링크 (없으면 그대로 두세요)
-  bandUrl  : "https://band.us/",
+  // 4) 하단 버튼 링크 (카톡 오픈채팅방 주소 등으로 교체하세요)
   kakaoUrl : "https://pf.kakao.com/",
 
   // 5) 상품 선택 옵션 (필요에 맞게 추가/삭제하세요)
@@ -389,7 +387,6 @@ document.getElementById('brandTitle').textContent = CONFIG.shopName;
 document.getElementById('brandTag').textContent   = CONFIG.tagline;
 document.getElementById('acctText').textContent   = CONFIG.bank + " " + CONFIG.account;
 document.getElementById('acctOwner').textContent  = CONFIG.owner;
-document.getElementById('bandLink').href          = CONFIG.bandUrl;
 document.getElementById('kakaoLink').href         = CONFIG.kakaoUrl;
 document.getElementById('year').textContent       = new Date().getFullYear();
 document.title = CONFIG.shopName + " 주문서";
