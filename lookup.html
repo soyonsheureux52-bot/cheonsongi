@@ -116,6 +116,7 @@ function render(orders){
       <div class="items">${esc(o.items)}</div>
       <div class="meta">
         <span>총 <b>${esc(o.totalQty)}</b>개</span>
+        ${o.nickname?`<span>닉네임 <b>${esc(o.nickname)}</b></span>`:''}
         ${o.name?`<span>받는분 <b>${esc(o.name)}</b></span>`:''}
         ${o.address?`<span style="flex-basis:100%">📦 ${esc(o.address)}</span>`:''}
       </div>

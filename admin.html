@@ -303,6 +303,7 @@ function render(){
         <div class="grid">
           <div><span class="k">연락처</span><a href="tel:${esc(phoneDigits)}">${esc(o.phone)}</a></div>
           <div><span class="k">입금자</span>${esc(o.depositor)||'-'}</div>
+          <div><span class="k">닉네임</span>${esc(o.nickname)||'-'}</div>
           <div style="grid-column:1/-1"><span class="k">주소</span>${esc(o.address)}</div>
           ${o.memo?`<div style="grid-column:1/-1"><span class="k">메모</span>${esc(o.memo)}</div>`:''}
         </div>
