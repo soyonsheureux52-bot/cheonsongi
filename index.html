@@ -347,7 +347,7 @@ textarea{resize:vertical;min-height:64px}
 <div class="sticky-bar" id="stickyBar">
   <div class="sticky-inner">
     <div class="st-total">총 수량<b id="stickyQty">0</b></div>
-    <button type="submit" form="orderForm" class="sticky-submit" id="submitBtn">주문하기 🎀</button>
+    <button type="submit" form="orderForm" class="sticky-submit" id="submitBtn">배송정보 제출하기 🎀</button>
   </div>
 </div>
 
@@ -585,7 +585,7 @@ $('#orderForm').addEventListener('submit', async function(e){
     showDone(lastSummary);
     toast("접수됐어요. 주문내역을 복사해 보내주시면 확실해요");
   }finally{
-    btn.disabled = false; btn.textContent = "주문하기 🎀";
+    btn.disabled = false; btn.textContent = "배송정보 제출하기 🎀";
   }
 });
 
