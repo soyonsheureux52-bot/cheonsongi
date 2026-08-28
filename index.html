@@ -250,13 +250,15 @@ textarea{resize:vertical;min-height:64px}
     </label>
 
     <!-- 상품 -->
-    <h2 style="margin-top:24px"><span class="dot"></span>주문 상품</h2>
-    <div id="items"></div>
-    <button type="button" class="add-item" onclick="addItem()">＋ 상품 추가하기</button>
-    <div class="total-line">총 수량 <b id="totalQty">0</b> 개</div>
+    <div id="sec-products">
+      <h2 style="margin-top:24px"><span class="dot"></span>주문 상품</h2>
+      <div id="items"></div>
+      <button type="button" class="add-item" onclick="addItem()">＋ 상품 추가하기</button>
+      <div class="total-line">총 수량 <b id="totalQty">0</b> 개</div>
+    </div>
 
     <!-- 배송 메모 -->
-    <label class="field" style="margin-top:24px">배송 메모
+    <label class="field" style="margin-top:24px" id="sec-memo">배송 메모
       <span class="hint">부재 시 문 앞, 경비실 등 요청사항이 있으면 적어주세요</span>
       <textarea name="memo" placeholder="예) 부재 시 문 앞에 놓아주세요"></textarea>
     </label>
@@ -359,6 +361,8 @@ document.title = CONFIG.shopName + " 주문서";
 
 const $ = s => document.querySelector(s);
 const itemsBox = $('#items');
+// 어드민에서 켜고 끄는 항목 표시 여부 (기본값: 둘 다 표시)
+let PRODUCTS_ON = true, MEMO_ON = true;
 // 예전 버전에서 저장해둔 고객정보 자동완성 데이터가 남아있으면 정리
 try{ localStorage.removeItem("cheonsongi_customer"); }catch(e){}
 
@@ -461,7 +465,7 @@ function calcTotal(){
 function collect(){
   const f = $('#orderForm');
   const g = n => (f.querySelector(`[name=${n}]`)?.value||'').trim();
-  const items = [...itemsBox.children].map(it=>({
+  const items = !PRODUCTS_ON ? [] : [...itemsBox.children].map(it=>({
     name  : it.querySelector('.p-name').value.trim(),
     color : it.querySelector('.p-color').value,
     size  : it.querySelector('.p-size').value,
@@ -482,7 +486,7 @@ function validate(d){
   let ok=true, firstErr=null;
   const need = {nickname:'닉네임', name:'주문자 성함', phone:'연락처', addr1:'배송 주소'};
   for(const k in need){ const bad=!d[k]; markErr(k,bad); if(bad){ok=false;firstErr=firstErr||k;} }
-  if(d.items.length===0){ toast("상품을 1개 이상 입력해 주세요"); return false; }
+  if(PRODUCTS_ON && d.items.length===0){ toast("상품을 1개 이상 입력해 주세요"); return false; }
   if(!ok){ toast(need[firstErr]+"을(를) 입력해 주세요"); document.querySelector(`[name=${firstErr}]`)?.focus(); return false; }
   if(!d.agree){ $('#agree').closest('.agree').style.color='var(--danger)'; toast("교환·반품 규정에 동의해 주세요"); return false; }
   return true;
@@ -570,8 +574,37 @@ function orderAgain(){
   window.scrollTo({top:0,behavior:'smooth'});
 }
 
+/* ---- 항목 표시/숨김 (어드민 설정 반영) ---- */
+function setSectionVisible(which, show){
+  if(which==='products'){
+    PRODUCTS_ON = show;
+    const s = document.getElementById('sec-products');
+    if(s) s.style.display = show ? '' : 'none';
+  }
+  if(which==='memo'){
+    MEMO_ON = show;
+    const s = document.getElementById('sec-memo');
+    if(s) s.style.display = show ? '' : 'none';
+  }
+}
+async function applyRemoteConfig(){
+  if(!CONFIG.gasUrl) return;
+  try{
+    const url = CONFIG.gasUrl + (CONFIG.gasUrl.includes('?')?'&':'?') + 'action=getConfig';
+    const ctrl = new AbortController();
+    const timer = setTimeout(()=>ctrl.abort(), 8000);
+    const res = await fetch(url, {credentials:'omit', signal:ctrl.signal})
+      .then(r=>r.json()).finally(()=>clearTimeout(timer));
+    if(res && res.result==='success'){
+      setSectionVisible('products', res.showProducts !== false);
+      setSectionVisible('memo',     res.showMemo     !== false);
+    }
+  }catch(e){ /* 실패 시 기본값(둘 다 표시) 유지 */ }
+}
+
 /* ---- 초기화 ---- */
 addItem();
+applyRemoteConfig();
 </script>
 </body>
 </html>
