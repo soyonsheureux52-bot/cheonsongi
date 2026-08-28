@@ -130,6 +130,21 @@ textarea{resize:vertical;min-height:64px}
 .policy li{margin:4px 0}
 .agree{display:flex;align-items:flex-start;gap:10px;margin-top:14px;font-size:14.5px;font-weight:700;color:#443b4b;cursor:pointer}
 .agree input{width:22px;height:22px;accent-color:var(--pink);flex:none;margin-top:1px}
+.policy-top{border:2px solid var(--pink);box-shadow:0 6px 20px rgba(255,79,151,.14)}
+.policy-top h2{display:flex;align-items:center;gap:8px}
+.must{font-size:11px;font-weight:800;color:#fff;background:var(--danger);padding:3px 9px;border-radius:999px;letter-spacing:.5px}
+.policy-block{border-radius:14px;padding:14px 16px;margin-top:12px;border:1.5px solid var(--line)}
+.policy-block:first-of-type{margin-top:2px}
+.policy-block .pb-head{font-weight:800;font-size:13.5px;color:var(--ink);margin-bottom:4px}
+.policy-block .pb-tag{font-weight:800;font-size:15px;margin-bottom:8px}
+.policy-block p{margin:0;font-size:13px;line-height:1.65;color:#6b6270}
+.policy-block .pb-note{margin-top:8px;padding-top:8px;border-top:1px dashed rgba(0,0,0,.08);font-weight:700;color:var(--danger);font-size:12.5px}
+.policy-block.danger{background:#fff1f4;border-color:#f6c6d3}
+.policy-block.danger .pb-tag{color:var(--danger)}
+.policy-block.normal{background:var(--pink-softer);border-color:var(--line)}
+.policy-block.normal .pb-tag{color:var(--pink-dark)}
+.policy-block.info{background:#fff9ec;border-color:#f5e2b8}
+.policy-block.info .pb-tag{color:#b3791b}
 
 /* ---- 제출 버튼 ---- */
 .submit{
@@ -201,6 +216,37 @@ textarea{resize:vertical;min-height:64px}
 
 <div class="wrap">
 
+  <!-- 교환·반품·환불 규정 (필독, 페이지 최상단) -->
+  <section class="card policy-top" id="policyCard">
+    <h2><span class="dot"></span>교환·반품·환불 규정 <span class="must">필독</span></h2>
+
+    <div class="policy-block danger">
+      <div class="pb-head">ㅁ 라이브 특가 / 1:1 오더 / 제작상품 / 공장직거래 상품</div>
+      <div class="pb-tag">"교환·반품·환불 절대 불가"</div>
+      <p>유통 마진을 없앤 파격 특가 및 공장 직거래 계약 상품으로, 단순 변심에 의한 교환/반품/환불이 불가능합니다.<br>
+      자유로운 교환·반품을 원하시는 분들은 온·오프라인 정가 구매를 권장드립니다.</p>
+    </div>
+
+    <div class="policy-block normal">
+      <div class="pb-head">ㅁ 정상가 구매 상품</div>
+      <div class="pb-tag">"수령일로부터 7일 이내 가능"</div>
+      <p>정상가로 구매하신 상품은 관련 법령(전자상거래법 제17조)에 의거하여 상품 수령일로부터 7일 이내 교환·반품·환불이 가능합니다.</p>
+      <p class="pb-note">⚠️ 예외 규정: 고객 부주의로 상품이 훼손되었거나, 개봉·착용 등으로 상품 가치가 훼손된 경우는 제외됩니다.</p>
+    </div>
+
+    <div class="policy-block info">
+      <div class="pb-head">ㅁ 특가 상품의 정상가 구매 전환 안내</div>
+      <div class="pb-tag">"특가 상품도 정상가로 안전하게 구매 가능!"</div>
+      <p>특가 상품이지만 교환·반품 서비스(7일 이내 보장)를 적용받고 싶으신가요?<br>
+      [채널톡]으로 <b>&lt;정상가로 구매 원합니다&gt;</b>를 남겨주시면, 정상가 결제 및 안내를 도와드리겠습니다.</p>
+    </div>
+
+    <label class="agree">
+      <input type="checkbox" name="agree" id="agree" form="orderForm" required>
+      <span>위 교환·반품·환불 규정을 모두 확인했으며 이에 동의합니다.<span class="req">*</span></span>
+    </label>
+  </section>
+
   <!-- 주문 안내 -->
   <section class="card">
     <h2><span class="dot"></span>주문 전 꼭 읽어주세요</h2>
@@ -261,23 +307,6 @@ textarea{resize:vertical;min-height:64px}
     <label class="field" style="margin-top:24px" id="sec-memo">배송 메모
       <span class="hint">부재 시 문 앞, 경비실 등 요청사항이 있으면 적어주세요</span>
       <textarea name="memo" placeholder="예) 부재 시 문 앞에 놓아주세요"></textarea>
-    </label>
-
-    <!-- 정책 -->
-    <h2 style="margin-top:24px"><span class="dot"></span>교환·반품·환불 규정</h2>
-    <div class="policy">
-      <b>주문 전 반드시 확인해 주세요.</b>
-      <ul>
-        <li><b>정상가 상품</b> : 상품 수령 후 7일 이내, 단순 변심 교환·반품 가능 (왕복 배송비 고객 부담)</li>
-        <li><b>세일·특가 상품</b> : 교환·반품·환불이 <b>불가</b>합니다.</li>
-        <li>택 제거, 세탁·착용·오염된 상품은 교환·반품이 불가합니다.</li>
-        <li>모니터 환경에 따라 색상이 실물과 다를 수 있으며, 이는 교환·반품 사유에 해당하지 않습니다.</li>
-        <li>단순 변심으로 인한 교환·반품 시 왕복 배송비는 고객님 부담입니다.</li>
-      </ul>
-    </div>
-    <label class="agree">
-      <input type="checkbox" name="agree" id="agree" required>
-      <span>위 교환·반품·환불 규정을 모두 확인했으며 이에 동의합니다.<span class="req">*</span></span>
     </label>
 
   </form>
@@ -476,7 +505,7 @@ function collect(){
     zipcode:g('zipcode'), addr1:g('addr1'), addr2:g('addr2'),
     address: [g('zipcode')?('('+g('zipcode')+')'):'', g('addr1'), g('addr2')].filter(Boolean).join(' '),
     depositor:g('depositor'), memo:g('memo'),
-    items, agree:f.querySelector('[name=agree]').checked,
+    items, agree: $('#agree').checked,
   };
 }
 function markErr(name,on){
