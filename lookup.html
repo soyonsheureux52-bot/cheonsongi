@@ -93,7 +93,7 @@ const results = $('#results');
 
 // 데모용 샘플 (gasUrl 비었을 때만 사용)
 const DEMO = [
-  { trackingNo:"123456789012", date:"2026. 8. 26", items:"12번 플라워 원피스 [핑크/M] x1", nickname:"", address:"(06236) 서울 강남구 테헤란로 1 101동 1001호", qty:1 },
+  { trackingNo:"123456789012", date:"2026. 8. 26", items:"12번 플라워 원피스 [핑크/M] x1", nickname:"", name:"홍길동", address:"(06236) 서울 강남구 테헤란로 1 101동 1001호", qty:1 },
 ];
 
 function render(orders){
@@ -111,6 +111,7 @@ function render(orders){
       <div class="items">${esc(o.items)}</div>
       <div class="meta">
         ${o.qty?`<span>수량 <b>${esc(o.qty)}</b>개</span>`:''}
+        ${o.name?`<span>성함 <b>${esc(o.name)}</b></span>`:''}
         ${o.nickname?`<span>닉네임 <b>${esc(o.nickname)}</b></span>`:''}
         ${o.address?`<span style="flex-basis:100%">📦 ${esc(o.address)}</span>`:''}
       </div>
