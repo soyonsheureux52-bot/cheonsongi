@@ -171,8 +171,6 @@ textarea{resize:vertical;min-height:64px}
   padding-bottom:env(safe-area-inset-bottom);
 }
 .sticky-inner{max-width:560px;margin:0 auto;display:flex;align-items:center;gap:12px;padding:10px 16px}
-.st-total{flex:none;font-size:14px;color:#6b6270;white-space:nowrap;line-height:1.2}
-.st-total b{display:block;color:var(--pink-dark);font-size:20px;font-weight:800}
 .sticky-submit{
   flex:1;padding:16px;border:0;border-radius:14px;
   background:linear-gradient(135deg,var(--pink) 0%,var(--pink-dark) 100%);
@@ -345,7 +343,6 @@ textarea{resize:vertical;min-height:64px}
 <!-- 하단 고정 제출 바 -->
 <div class="sticky-bar" id="stickyBar">
   <div class="sticky-inner">
-    <div class="st-total">총 수량<b id="stickyQty">0</b></div>
     <button type="submit" form="orderForm" class="sticky-submit" id="submitBtn">배송정보 제출하기 🎀</button>
   </div>
 </div>
@@ -490,7 +487,6 @@ function calcTotal(){
   let t=0;
   itemsBox.querySelectorAll('.p-qty').forEach(i=>{ const v=parseInt(i.value||'0',10); if(!isNaN(v))t+=v; });
   $('#totalQty').textContent = t;
-  $('#stickyQty').textContent = t;
 }
 
 /* ---- 폼 수집 & 검증 ---- */
