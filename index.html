@@ -252,7 +252,7 @@ textarea{resize:vertical;min-height:64px}
   </section>
 
   <!-- 주문 안내 -->
-  <section class="card">
+  <section class="card" id="noticeCard">
     <h2><span class="dot"></span>주문 전 꼭 읽어주세요</h2>
     <div class="notice">
       <div class="row"><span class="k">배송기간</span><span>주문 후 <b>3~14일</b> 정도 소요됩니다.</span></div>
@@ -532,13 +532,15 @@ function buildSummary(d){
   if(d.depositor) lines.push("입금자명 : "+d.depositor);
   lines.push("─────────────────");
   let total=0;
-  d.items.forEach((it,i)=>{
-    total+=it.qty;
-    const opt=[it.color,it.size].filter(Boolean).join('/');
-    lines.push(`${i+1}. ${it.name}${opt?' ['+opt+']':''} × ${it.qty}개`);
-  });
-  lines.push("─────────────────");
-  lines.push("총 수량 : "+total+"개");
+  if(d.items && d.items.length){
+    d.items.forEach((it,i)=>{
+      total+=it.qty;
+      const opt=[it.color,it.size].filter(Boolean).join('/');
+      lines.push(`${i+1}. ${it.name}${opt?' ['+opt+']':''} × ${it.qty}개`);
+    });
+    lines.push("─────────────────");
+    lines.push("총 수량 : "+total+"개");
+  }
   if(d.memo) lines.push("배송메모 : "+d.memo);
   lines.push("");
   lines.push("입금계좌 : "+CONFIG.bank+" "+CONFIG.account+" (예금주 "+CONFIG.owner+")");
@@ -583,6 +585,8 @@ $('#orderForm').addEventListener('submit', async function(e){
 });
 
 function showDone(summary){
+  $('#policyCard').style.display='none';
+  $('#noticeCard').style.display='none';
   $('#orderForm').style.display='none';
   $('#footLinks').style.display='none';
   $('#stickyBar').style.display='none';
@@ -597,6 +601,8 @@ function orderAgain(){
   $('#agree').checked=false;
   policyChecks.forEach(c=>c.checked=false);
   $('#doneCard').style.display='none';
+  $('#policyCard').style.display='block';
+  $('#noticeCard').style.display='block';
   $('#orderForm').style.display='block';
   $('#footLinks').style.display='flex';
   $('#stickyBar').style.display='block';
